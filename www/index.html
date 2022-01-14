@@ -42,7 +42,8 @@
     }
 
     /*.......( Item Type File )...............................................*/
-    .target-pod .pod-data .file {
+    .target-pod .pod-data .file,
+    .pod-data .unknown {
         display: none;
     }
 
@@ -283,9 +284,7 @@
 <script src="https://cdn.simplyedit.io/1/simply-edit.js" data-simply-storage="none"></script>
 <script src="https://unpkg.com/simplyview/dist/simply.everything.js"></script>
 <script src="https://zettelkasten.dev.muze.nl/assets/js/bundle.js"></script>
-<script type="module">
-  // import { getDefaultSession } from 'https://cdn.skypack.dev/@inrupt/solid-client-authn-browser@v1.11.2'
-  // import { Parser } from 'https://cdn.skypack.dev/n3'
+<script xtype="module">
   const getDefaultSession = solidAuthn.getDefaultSession;
   const Parser = n3.Parser;
 
@@ -476,10 +475,78 @@
           })
         )
     },
-    writeToPod: (url, content) => solidSession.fetch(url, {
-      body: content,
-      method: 'PUT'
-    }),
+    writeMeta: (pods, sources, target) => {
+      // do nothing
+      var sourceUrl = pods.source.url;
+      if (sourceUrl[sourceUrl.length-1]!=='/') {
+        sourceUrl+='/';
+      }
+      if (target[target.length-1]!=='/') {
+        target+='/';
+      }
+      var redirects = {};
+      sources.forEach(source => {
+        let filenames = source.split('/');
+        let filename = filenames.pop();
+        redirects[filename] = target+filename;
+      });
+      const parser = new Parser({blankNodePrefix: '', baseIRI: sourceUrl+'.meta'})
+      var prefixes = {};
+      solidApi.fetchFromPod(sourceUrl+'.meta')
+      .then(text => parser.parse(text, null, (prefix, url) => { prefixes[prefix] = url.id }))
+      .then(data => {
+        return {
+          data: data,
+          prefixes: prefixes
+        };
+      })
+      .then(meta => {
+        var lm = 'https://purl.org/pdsinterop/link-metadata#';
+        var lmPrefix = '';
+        var preferredPrefix = 'lm';
+        Object.keys(meta.prefixes).forEach(prefix => {
+          if (meta.prefixes[prefix]==lm) {
+            lmPrefix = prefix;
+          }
+        });
+        if (!lmPrefix) {
+          count = 0;
+          do {
+            lmPrefix = preferredPrefix + (count ? count : '');
+            count++;
+          } while (meta.prefixes[lmPrefix]);
+          meta.prefixes[lmPrefix] = lm;
+        }
+        var newMeta = new n3.Writer({
+          format: 'text/turtle'
+        });
+        newMeta.addPrefixes(meta.prefixes);
+        newMeta.addQuads(meta.data);
+        Object.keys(redirects).forEach(redirect => {
+          newMeta.addQuad(
+            new n3.NamedNode(redirect), 
+            new n3.NamedNode(lm+'redirectPermanent'), 
+            new n3.NamedNode(redirects[redirect])
+          );
+        });
+        newMeta.end((error,result) => {
+          console.log(result);
+          solidApi.writeToPod(sourceUrl+'.meta', result, 'text/turtle')
+        })
+      })
+    },
+    writeToPod: (url, content, contentType=false) => {
+      var fetchParams = {
+        body: content,
+        method: 'PUT'
+      };
+      if (contentType){
+        fetchParams.headers = {
+          'Content-Type': contentType
+        };
+      }
+      solidSession.fetch(url, fetchParams)
+    },
   }
 
   const solidApp = simply.app({
@@ -508,7 +575,9 @@
         if (! values.url) {
           return solidApp.actions.log(`Please provide an URL as ${values.pod} pod!`, 0, 'error')
         }
-
+        if (values.url[values.url.length-1]!='/') {
+          values.url+='/';
+        }
         solidApp.view.pods[values.pod].url = values.url
 
         return solidApi.listPodContent(values.url)
@@ -536,7 +605,7 @@
 
         const sourcePromises = selectedSources.map(
           selectedSource => {
-            solidApp.actions.log(`[START] Copying <code>${selectedSource}</code> to ${selectedTarget}`, 0, 'info')
+//            solidApp.actions.log(`[START] Copying <code>${selectedSource}</code> to ${selectedTarget}`, 0, 'info')
 
             return solidApi.copy(selectedSource, selectedTarget)
               .then(responses => Array.isArray(responses) ? responses : [responses])
@@ -544,19 +613,32 @@
         )
 
         Promise.allSettled(sourcePromises)
-          .then(promises => promises.forEach(promise => {
+        .then(promises => {
+          promises.forEach((promise,index) => {
+            if (!promise.value) {
+              solidApp.actions.log(`Failed copying "${selectedSources[index]}"`, 0, 'error')
+            } else {
+
               promise.value.forEach(response => {
                 response = response.value ? response.value : response
                 if (response === undefined) {
                   solidApp.actions.log(`[FAILED]`, 0, 'error')
-                } else {
-                  solidApp.actions.log(`[DONE] Copying "${response.url}" (from "${response.sourceUrl}")`, 0, 'debug')
                 }
               })
-            })
-          )
-          .then(() => solidApp.actions.log(`[DONE] Copying selected ${JSON.stringify(selectedSources)} to "${selectedTarget}"`, 0, 'success'))
-          .catch(error => console.error('!!! ADRIAaaaaaaaaN !!!', error))
+            }
+          })
+          return promises;
+        })
+        .then(() => {
+          solidApp.actions.log(`Copied selected files to "${selectedTarget}"`, 0, 'success');
+          return solidApi.writeMeta(solidApp.view.pods, selectedSources, selectedTarget);
+
+          //todo update source and target views
+        })
+        .catch(error => {
+          solidApp.actions.log(`Failed Copying selected files to "${selectedTarget}"`, 0, 'error');
+            console.error(error)
+        })
       },
     },
     view: {
@@ -586,5 +668,15 @@
           })
       }
     })
+
+    function dereferencePrefixes(predicate, prefixes) {
+        if (predicate.indexOf(':')!==false) {
+            var prefix = predicate.split(':')[0];
+            if (prefixes[prefix]) {
+                predicate = prefixes[prefix]+predicate.split(':')[1];
+            }
+        }
+        return predicate;
+    }
 </script>
 </body>
