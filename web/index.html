@@ -281,9 +281,12 @@
 
 <script src="https://cdn.simplyedit.io/1/simply-edit.js" data-simply-storage="none"></script>
 <script src="https://unpkg.com/simplyview/dist/simply.everything.js"></script>
+<script src="https://zettelkasten.dev.muze.nl/assets/js/bundle.js"></script>
 <script type="module">
-  import {getDefaultSession} from 'https://cdn.skypack.dev/@inrupt/solid-client-authn-browser'
-  import {Parser} from 'https://cdn.skypack.dev/n3'
+  // import { getDefaultSession } from 'https://cdn.skypack.dev/@inrupt/solid-client-authn-browser@v1.11.2'
+  // import { Parser } from 'https://cdn.skypack.dev/n3'
+  const getDefaultSession = solidAuthn.getDefaultSession;
+  const Parser = n3.Parser;
 
   const solidSession = getDefaultSession()
 
