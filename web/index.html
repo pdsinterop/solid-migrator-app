@@ -499,9 +499,15 @@
       setPodUrl: (webId, pod) => solidApi.getPodUrl(new URL(webId)).then(podUrl => solidApp.view.pods[pod].url = podUrl),
     },
     commands: {
-      connect: (form, values) => solidApi.connect(values.issuer),
+      connect: (form, values) => solidApi.connect(values.issuer)
+        .catch(error => solidApp.actions.log(`Could not connect to ${values.issuer}`, 0, 'error'))
+      ,
       disconnect: () => solidApi.disconnect().then(() => {window.location = window.location}),
       readPod: (form, values) => {
+        if (! values.url) {
+          return solidApp.actions.log(`Please provide an URL as ${values.pod} pod!`, 0, 'error')
+        }
+
         solidApp.view.pods[values.pod].url = values.url
 
         return solidApi.listPodContent(values.url)
