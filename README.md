@@ -9,7 +9,7 @@ A live version of the application is hosted at https://pdsinterop.org/solid-migr
 
 ## Install
 
-Either visit the live version or clone the content of this repo and host the `web/` directory yourself.
+Either visit [the live version][demo-link] or clone the content of this repo and host the `www/` directory yourself.
 
 ## Usage
 
@@ -28,3 +28,4 @@ This project has been published under a [MIT License (MIT)][license-link].
 [coc-link]: https://pdsinterop.org/code-of-conduct/
 [issues-link]: https://github.com/pdsinterop/solid-migrator-app/issues/
 [license-link]: https://pdsinterop.org/license/
+[demo-link]: https://pdsinterop.org/solid-migrator-app/www/
