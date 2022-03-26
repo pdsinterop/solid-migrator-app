@@ -5,7 +5,7 @@ _Web application to help migrate between Solid Pods_
 The Solid Migrator App lets Solid users migrate the contents of a Solid Pod from
 a source location to a target location.
 
-A live version of the application is hosted at https://pdsinterop.org/solid-migrator-app/
+A live version of the application is hosted at [https://pdsinterop.org/solid-migrator-app/][demo-link].
 
 ## Install
 
