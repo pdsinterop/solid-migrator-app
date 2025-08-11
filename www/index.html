@@ -282,11 +282,15 @@
 </main>
 
 <script src="https://cdn.simplyedit.io/1/simply-edit.js" data-simply-storage="none"></script>
-<script src="https://unpkg.com/simplyview/dist/simply.everything.js"></script>
-<script src="https://zettelkasten.dev.muze.nl/assets/js/bundle.js"></script>
+
+<!-- Versions pinned to +/- 2022, when the code was created -->
+<script src="https://cdn.jsdelivr.net/npm/simplyview@2.1.1/dist/simply.everything.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@inrupt/solid-client-authn-browser@1.12.3/dist/solid-client-authn.bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/n3@1.13.0/browser/n3.min.js"></script>
+
 <script xtype="module">
-  const getDefaultSession = solidAuthn.getDefaultSession;
-  const Parser = n3.Parser;
+  const getDefaultSession = solidClientAuthentication.default.getDefaultSession;
+  const Parser = N3.Parser;
 
   const solidSession = getDefaultSession()
 
