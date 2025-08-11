@@ -289,9 +289,8 @@
 <script src="https://cdn.jsdelivr.net/npm/n3@1.13.0/browser/n3.min.js"></script>
 
 <script xtype="module">
-  const getDefaultSession = solidClientAuthentication.default.getDefaultSession;
-  const Parser = N3.Parser;
-
+  const getDefaultSession = solidClientAuthentication.default.getDefaultSession
+  const Parser = N3.Parser
   const solidSession = getDefaultSession()
 
   const solidApi = {
@@ -409,9 +408,16 @@
           resource.resourceType = 'account'
         } else if (properties['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] !== undefined) {
           const types = properties['http://www.w3.org/1999/02/22-rdf-syntax-ns#type']
-          if (types.includes('http://www.w3.org/ns/ldp#Container') || types.includes('http://www.w3.org/ns/ldp#BasicContainer')) {
+          if (
+            types.includes('http://www.w3.org/ns/ldp#Container')
+            || types.includes('http://www.w3.org/ns/ldp#BasicContainer')
+          ) {
             resource.resourceType = 'folder'
-          } else if (types.includes('http://www.w3.org/ns/ldp#Resource') || types.includes('http://www.w3.org/ns/ldp#NonRDFSource')) {
+          } else if (
+            types.includes('http://www.w3.org/ns/ldp#Resource')
+            || types.includes('http://www.w3.org/ns/ldp#NonRDFSource')
+            || types.includes('http://www.w3.org/ns/iana/media-types/text/plain#Resource')
+          ) {
             resource.resourceType = 'file'
           } else {
             resource.resourceType = 'other'
@@ -481,73 +487,73 @@
     },
     writeMeta: (pods, sources, target) => {
       // do nothing
-      var sourceUrl = pods.source.url;
-      if (sourceUrl[sourceUrl.length-1]!=='/') {
-        sourceUrl+='/';
+      var sourceUrl = pods.source.url
+      if (sourceUrl[sourceUrl.length - 1] !== '/') {
+        sourceUrl += '/'
       }
-      if (target[target.length-1]!=='/') {
-        target+='/';
+      if (target[target.length - 1] !== '/') {
+        target += '/'
       }
-      var redirects = {};
+      var redirects = {}
       sources.forEach(source => {
-        let filenames = source.split('/');
-        let filename = filenames.pop();
-        redirects[filename] = target+filename;
-      });
-      const parser = new Parser({blankNodePrefix: '', baseIRI: sourceUrl+'.meta'})
-      var prefixes = {};
-      solidApi.fetchFromPod(sourceUrl+'.meta')
+        let filenames = source.split('/')
+        let filename = filenames.pop()
+        redirects[filename] = target + filename
+      })
+      const parser = new Parser({blankNodePrefix: '', baseIRI: sourceUrl + '.meta'})
+      var prefixes = {}
+      solidApi.fetchFromPod(sourceUrl + '.meta')
       .then(text => parser.parse(text, null, (prefix, url) => { prefixes[prefix] = url.id }))
       .then(data => {
         return {
           data: data,
-          prefixes: prefixes
-        };
+          prefixes: prefixes,
+        }
       })
       .then(meta => {
-        var lm = 'https://purl.org/pdsinterop/link-metadata#';
-        var lmPrefix = '';
-        var preferredPrefix = 'lm';
+        var lm = 'https://purl.org/pdsinterop/link-metadata#'
+        var lmPrefix = ''
+        var preferredPrefix = 'lm'
         Object.keys(meta.prefixes).forEach(prefix => {
-          if (meta.prefixes[prefix]==lm) {
-            lmPrefix = prefix;
+          if (meta.prefixes[prefix] == lm) {
+            lmPrefix = prefix
           }
-        });
-        if (!lmPrefix) {
-          count = 0;
+        })
+        if ( ! lmPrefix) {
+          count = 0
           do {
-            lmPrefix = preferredPrefix + (count ? count : '');
-            count++;
-          } while (meta.prefixes[lmPrefix]);
-          meta.prefixes[lmPrefix] = lm;
+            lmPrefix = preferredPrefix + (count ? count : '')
+            count++
+          } while (meta.prefixes[lmPrefix])
+          meta.prefixes[lmPrefix] = lm
         }
-        var newMeta = new n3.Writer({
-          format: 'text/turtle'
-        });
-        newMeta.addPrefixes(meta.prefixes);
-        newMeta.addQuads(meta.data);
+        var newMeta = new N3.Writer({
+          format: 'text/turtle',
+        })
+        newMeta.addPrefixes(meta.prefixes)
+        newMeta.addQuads(meta.data)
         Object.keys(redirects).forEach(redirect => {
           newMeta.addQuad(
-            new n3.NamedNode(redirect), 
-            new n3.NamedNode(lm+'redirectPermanent'), 
-            new n3.NamedNode(redirects[redirect])
-          );
-        });
-        newMeta.end((error,result) => {
-          console.log(result);
-          solidApi.writeToPod(sourceUrl+'.meta', result, 'text/turtle')
+            new N3.NamedNode(redirect),
+            new N3.NamedNode(lm + 'redirectPermanent'),
+            new N3.NamedNode(redirects[redirect]),
+          )
+        })
+        newMeta.end((error, result) => {
+          console.log(result)
+          solidApi.writeToPod(sourceUrl + '.meta', result, 'text/turtle')
         })
       })
     },
-    writeToPod: (url, content, contentType=false) => {
+    writeToPod: (url, content, contentType = false) => {
       var fetchParams = {
         body: content,
-        method: 'PUT'
-      };
-      if (contentType){
+        method: 'PUT',
+      }
+      if (contentType) {
         fetchParams.headers = {
-          'Content-Type': contentType
-        };
+          'Content-Type': contentType,
+        }
       }
       solidSession.fetch(url, fetchParams)
     },
@@ -557,7 +563,7 @@
     actions: { // Actions should all return a Promise
       log: (message, indent = 0, type = 'debug') => {
         solidApp.view.alerts = solidApp.view.alerts.map(alert => {
-          if (! alert || alert.state === 'shown') {
+          if ( ! alert || alert.state === 'shown') {
             alert = null
           } else {
             alert.state = 'shown'
@@ -566,7 +572,7 @@
           return alert
         })
 
-        solidApp.view.alerts.push({message, state: 'new', "data-simply-template": type})
+        solidApp.view.alerts.push({message, state: 'new', 'data-simply-template': type})
       },
       setPodUrl: (webId, pod) => solidApi.getPodUrl(new URL(webId)).then(podUrl => solidApp.view.pods[pod].url = podUrl),
     },
@@ -576,16 +582,16 @@
       ,
       disconnect: () => solidApi.disconnect().then(() => {window.location = window.location}),
       readPod: (form, values) => {
-        if (! values.url) {
+        if ( ! values.url) {
           return solidApp.actions.log(`Please provide an URL as ${values.pod} pod!`, 0, 'error')
         }
-        if (values.url[values.url.length-1]!='/') {
-          values.url+='/';
+        if (values.url[values.url.length - 1] != '/') {
+          values.url += '/'
         }
         solidApp.view.pods[values.pod].url = values.url
 
         return solidApi.listPodContent(values.url)
-          .then(podData => podData.map(resource => Object.assign(resource, {"data-simply-template": resource.resourceType})))
+          .then(podData => podData.map(resource => Object.assign(resource, {'data-simply-template': resource.resourceType})))
           .then(podData => solidApp.view.pods[values.pod].data = JSON.parse(JSON.stringify(podData)))
           .then(() => {
             solidApp.view.isLoaded = solidApp.view.pods.source.data.length > 0
@@ -618,8 +624,8 @@
 
         Promise.allSettled(sourcePromises)
         .then(promises => {
-          promises.forEach((promise,index) => {
-            if (!promise.value) {
+          promises.forEach((promise, index) => {
+            if ( ! promise.value) {
               solidApp.actions.log(`Failed copying "${selectedSources[index]}"`, 0, 'error')
             } else {
 
@@ -631,17 +637,17 @@
               })
             }
           })
-          return promises;
+          return promises
         })
         .then(() => {
-          solidApp.actions.log(`Copied selected files to "${selectedTarget}"`, 0, 'success');
-          return solidApi.writeMeta(solidApp.view.pods, selectedSources, selectedTarget);
+          solidApp.actions.log(`Copied selected files to "${selectedTarget}"`, 0, 'success')
+          return solidApi.writeMeta(solidApp.view.pods, selectedSources, selectedTarget)
 
           //todo update source and target views
         })
         .catch(error => {
-          solidApp.actions.log(`Failed Copying selected files to "${selectedTarget}"`, 0, 'error');
-            console.error(error)
+          solidApp.actions.log(`Failed Copying selected files to "${selectedTarget}"`, 0, 'error')
+          console.error(error)
         })
       },
     },
@@ -674,13 +680,13 @@
     })
 
     function dereferencePrefixes(predicate, prefixes) {
-        if (predicate.indexOf(':')!==false) {
-            var prefix = predicate.split(':')[0];
-            if (prefixes[prefix]) {
-                predicate = prefixes[prefix]+predicate.split(':')[1];
-            }
+        if (predicate.indexOf(':') !== false) {
+          var prefix = predicate.split(':')[0]
+          if (prefixes[prefix]) {
+            predicate = prefixes[prefix] + predicate.split(':')[1]
+          }
         }
-        return predicate;
+        return predicate
     }
 </script>
 </body>
