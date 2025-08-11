@@ -127,7 +127,19 @@
       <p>Please login with your Solid WebID below.</p>
       <div class="ds-form-group">
         <label>
-          <input name="issuer" type="text" value="https://solidcommunity.net">
+          <input list="issuers" name="issuer" placeholder="Solid OIDC Issuer" type="text">
+          <datalist data-simply-list="issuers" id="issuers">
+            <option value="https://datapod.igrant.io/">iGrant</option>
+            <option value="https://login.inrupt.com/">Inrupt</option>
+            <option value="https://solid.redpencil.io/">Redpencil</option>
+            <option value="https://solidcommunity.net">SolidCommunity</option>
+            <option value="https://solidweb.me/">SolidWeb (me)</option>
+            <option value="https://solidweb.org/">SolidWeb (org)</option>
+            <option value="https://teamid.live/">TeamId/</option>
+            <option value="https://trinpod.eu/">TrinPod (EU)</option>
+            <option value="https://trinpod.us/">TrinPod (US)</option>
+            <option value="https://idp.use.id/">use.id</option>
+          </datalist>
         </label>
         <button class="ds-button">Connect</button>
       </div>
