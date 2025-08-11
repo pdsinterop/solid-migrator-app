@@ -66,8 +66,8 @@
       </div>
     </button>
     <div class="ds-navbar-right">
-      <button data-simply-command="home" class="ds-button ds-button-primary">
-        <img src="https://pdsinterop.org/logo/monochrome-black.svg" class="ds-icon pdsinterop-logo">
+      <button class="ds-button ds-button-primary" data-simply-command="home">
+        <img class="ds-icon pdsinterop-logo" src="https://pdsinterop.org/logo/monochrome-black.svg">
         Solid Migrator
       </button>
     </div>
@@ -75,34 +75,34 @@
   <div class="pdsinterop-alerts">
     <ul class="ds-toasts ds-space" data-simply-list="alerts">
       <template data-simply-template="debug">
-        <li class="ds-toast ds-toast-debug ds-toast-autohide" data-simply-field="state"
-            data-simply-content="attributes" data-simply-attributes="data-state">
+        <li class="ds-toast ds-toast-debug ds-toast-autohide" data-simply-attributes="data-state"
+          data-simply-content="attributes" data-simply-field="state">
           <div class="ds-space" data-simply-field="message"></div>
         </li>
       </template>
       <template data-simply-template="error">
-        <li class="ds-toast ds-toast-error ds-toast-autohide" data-simply-field="state"
-            data-simply-content="attributes" data-simply-attributes="data-state">
+        <li class="ds-toast ds-toast-error ds-toast-autohide" data-simply-attributes="data-state"
+          data-simply-content="attributes" data-simply-field="state">
           <div class="ds-space" data-simply-field="message"></div>
         </li>
       </template>
       <template data-simply-template="warning">
-        <li class="ds-toast ds-toast-warning ds-toast-autohide" data-simply-field="state"
-            data-simply-content="attributes" data-simply-attributes="data-state">
+        <li class="ds-toast ds-toast-warning ds-toast-autohide" data-simply-attributes="data-state"
+          data-simply-content="attributes" data-simply-field="state">
           <div class="ds-space" data-simply-field="message"></div>
         </li>
       </template>
       <template data-simply-template="info">
-        <li class="ds-toast ds-toast-info ds-toast-autohide" data-simply-field="state"
-            data-simply-content="attributes" data-simply-attributes="data-state">
+        <li class="ds-toast ds-toast-info ds-toast-autohide" data-simply-attributes="data-state"
+          data-simply-content="attributes" data-simply-field="state">
           <div class="ds-space" data-simply-field="message"></div>
         </li>
       </template>
       <template data-simply-template="success">
         <li class="ds-toast ds-toast-success ds-toast-autohide"
-            data-simply-field="state"
-            data-simply-content="attributes"
-            data-simply-attributes="data-state"
+          data-simply-attributes="data-state"
+          data-simply-content="attributes"
+          data-simply-field="state"
         >
           <div class="ds-space" data-simply-field="message"></div>
         </li>
@@ -111,8 +111,8 @@
   </div>
 </header>
 <nav class="ds-navbar ds-hidden pdsinterop-menu">
-  <ul class="ds-navbar-nav ds-navbar-vertical ds-space" data-simply-path="/" data-simply-list="menu-nav"
-      data-simply-sortable>
+  <ul class="ds-navbar-nav ds-navbar-vertical ds-space" data-simply-list="menu-nav" data-simply-path="/"
+    data-simply-sortable>
     <template>
       <li><a class="ds-navbar-item" data-simply-field="link" href="#home">Home</a></li>
     </template>
@@ -120,7 +120,7 @@
 </nav>
 
 <main class="ds-constrain-width">
-  <div data-simply-field="isConnected" data-simply-content="template">
+  <div data-simply-content="template" data-simply-field="isConnected">
     <form data-simply-command="connect" data-simply-template="false">
       <h2>Welcome to the Solid Migrator</h2>
       <p>This service will help you move data from one solid pod to another.</p>
@@ -133,18 +133,18 @@
       </div>
     </form>
     <div data-simply-template="true">
-      <button data-simply-command="disconnect" class="ds-button">Disconnect</button>
+      <button class="ds-button" data-simply-command="disconnect">Disconnect</button>
     </div>
   </div>
   <div class="ds-grid">
     <section class="source-pod">
-      <div data-simply-field="isConnected" data-simply-content="template">
+      <div data-simply-content="template" data-simply-field="isConnected">
         <div data-simply-template="true">
           <h2>Source</h2>
           <form class="pod-url ds-form-group" data-simply-command="readPod">
             <label>
-              <input type="url" name="url" placeholder="Enter POD URL" list="sources">
-              <datalist id="sources" data-simply-list="sources">
+              <input list="sources" name="url" placeholder="Enter POD URL" type="url">
+              <datalist data-simply-list="sources" id="sources">
                 <template>
                   <option data-simply-field="url"></option>
                 </template>
@@ -219,12 +219,12 @@
     </section>
 
     <section class="target-pod">
-      <div data-simply-field="isConnected" data-simply-content="template">
+      <div data-simply-content="template" data-simply-field="isConnected">
         <div data-simply-template="true">
           <h2>Target</h2>
           <form class="pod-url ds-form-group" data-simply-command="readPod">
             <label>
-              <input type="url" name="url" placeholder="Enter POD URL" list="targets">
+              <input list="targets" name="url" placeholder="Enter POD URL" type="url">
               <datalist data-simply-list="targets" id="targets">
                 <template>
                   <option data-simply-field="url"></option>
@@ -272,7 +272,7 @@
           </form>
         </div>
       </div>
-      <form data-simply-field="isLoaded" data-simply-content="template" data-simply-command="copySelected">
+      <form data-simply-command="copySelected" data-simply-content="template" data-simply-field="isLoaded">
         <template data-simply-template="true">
           <button class="ds-align-right ds-button ds-button-primary ds-space-vertical">Migrate</button>
         </template>
@@ -281,7 +281,7 @@
   </div>
 </main>
 
-<script src="https://cdn.simplyedit.io/1/simply-edit.js" data-simply-storage="none"></script>
+<script data-simply-storage="none" src="https://cdn.simplyedit.io/1/simply-edit.js"></script>
 
 <!-- Versions pinned to +/- 2022, when the code was created -->
 <script src="https://cdn.jsdelivr.net/npm/simplyview@2.1.1/dist/simply.everything.js"></script>
