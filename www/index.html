@@ -436,7 +436,11 @@
 
       return list.map(item => {
         if ( ! rootRegExp && item.resourceType === 'root') {
-          rootRegExp = new RegExp(`^${item.url}`, 'g')
+          // @TODO: Use more intelligent logic
+          //        This works better than using the full URL
+          //        but breaks when the path has a long prefix
+          const url = new URL(item.url)
+          rootRegExp = new RegExp(`^${url.protocol}//${url.host}/`, 'g')
         }
 
         if (item.size) {
